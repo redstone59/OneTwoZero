@@ -1,10 +1,14 @@
 from python_obs.clients import OBS
 from one_two_zero.core import OneTwoZero
-from one_two_zero.decorators import otz_event_seconds, otz_event_repeating
+from one_two_zero.decorators import *
 
 KILL_TIME = 70
 otz = OneTwoZero(KILL_TIME)
 otz.debug_mode = True
+
+@otz_event_on_start(otz)
+def on_startup(obs: OBS):
+    obs.set_scene("120 Wait")
 
 @otz_event_seconds(otz, lambda uptime: uptime >= KILL_TIME - 60)
 def one_minute_left(obs: OBS):
