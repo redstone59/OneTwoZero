@@ -1,8 +1,6 @@
-from datetime import datetime
 from one_two_zero.events import OTZEvent
 from one_two_zero.utils import otz_log
 from python_obs.clients import OBS
-from typing import Callable
 
 import time
 import threading
