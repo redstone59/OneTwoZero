@@ -14,6 +14,7 @@ class OneTwoZero:
         
         self.events: list[OTZEvent] = []
         self.kill_time = kill_time_seconds
+        self.buffer_time = 0
         
         self.debug_mode = False
 
@@ -59,7 +60,9 @@ class OneTwoZero:
         self._obs.connect()
         otz_log(f"Started stream with kill time of {self.kill_time}s")
         self._start_time = time.time()
-        if not self.debug_mode: self._obs.start_stream()
+        if not self.debug_mode:
+            self._obs.start_stream()
+            time.sleep(self.buffer_time)
         
         otz_log("Starting event queue thread...")
         event_queue_thread = threading.Thread(

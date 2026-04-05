@@ -4,11 +4,16 @@ from one_two_zero.decorators import *
 
 KILL_TIME = 70
 otz = OneTwoZero(KILL_TIME)
+otz.buffer_time = 5
 otz.debug_mode = True
 
 @otz_event_on_start(otz)
 def on_startup(obs: OBS):
     obs.set_scene("120 Wait")
+
+@otz_event_seconds(otz, lambda uptime: uptime >= 3 * 60)
+def and_we_are_live(obs: OBS):
+    obs.set_scene("120 Desktop")
 
 @otz_event_seconds(otz, lambda uptime: uptime >= KILL_TIME - 60)
 def one_minute_left(obs: OBS):
