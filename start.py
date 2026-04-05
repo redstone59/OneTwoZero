@@ -27,10 +27,10 @@ def ten_minutes_left(obs: OBS):
 def thirty_minutes_left(obs: OBS):
     obs.call_macro("120 30 minutes left")
 
-@otz_event_repeating(otz, 1)
-def test_repeating(obs: OBS):
-    source = obs.scene("120 Desktop").source("warning tex")
-    source.toggle_visiblity()
+# @otz_event_repeating(otz, 1)
+# def test_repeating(obs: OBS):
+#     source = obs.scene("120 Desktop").source("warning tex")
+#     source.toggle_visiblity()
 
 if __name__ == "__main__":
     otz.start_stream()
