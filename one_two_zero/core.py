@@ -6,6 +6,9 @@ import time
 import threading
 import queue
 
+def _keep_obs_alive(obs: OBS):
+    obs.connect()
+
 class OneTwoZero:
     def __init__(self, kill_time_seconds: float, host: str = "localhost", port: int = 4455, password: str | None = None) -> None:
         self._start_time = float('inf')
@@ -17,13 +20,17 @@ class OneTwoZero:
         self.buffer_time = 0
         
         self.debug_mode = False
+        
+        keep_alive_event = OTZEvent(lambda uptime: False, _keep_obs_alive)
+        keep_alive_event.initialise_timer_event(120)
+        self.subscribe_to_event(keep_alive_event)
 
     def check_event(self, event: OTZEvent, uptime: float) -> None:
         if event.is_timer_event:
             event.update_timer()
             
         if event.has_condition_met(uptime):
-            otz_log(f"Running {"repeating" if event.is_timer_event else "one-time"} event '{event.on_condition_met.__name__}'...")
+            otz_log(f"Adding {"repeating" if event.is_timer_event else "one-time"} event '{event.on_condition_met.__name__}' to queue...")
             
             if event.is_timer_event and event.activation_time != None:
                 event.elapsed_time -= event.activation_time
@@ -50,6 +57,7 @@ class OneTwoZero:
             if self._event_queue.empty(): continue
 
             event_to_run = self._event_queue.get()
+            otz_log(f"Running {"repeating" if event_to_run.is_timer_event else "one-time"} event '{event_to_run.on_condition_met.__name__}'...")
             event_to_run()
         otz_log("Event queue thread stopped.")
 
