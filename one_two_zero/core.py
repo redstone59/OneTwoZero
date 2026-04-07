@@ -38,6 +38,12 @@ class OneTwoZero:
         for event in self.events:
             self.check_event(event, uptime)
 
+    def confirm_stream(self) -> bool:
+        if self.debug_mode: return True
+
+        print(f"You are about to start streaming with a kill time of {self.kill_time} seconds ({self.kill_time / 3600:.2f}h).")
+        return input("Are you sure? (Y/N) ").lower().strip().startswith('y')
+
     def event_queue_loop(self):
         otz_log("Event queue thread running!")
         while self.get_uptime() < self.kill_time:
@@ -59,10 +65,11 @@ class OneTwoZero:
         
         self._obs.connect()
         otz_log(f"Started stream with kill time of {self.kill_time}s")
-        self._start_time = time.time()
         if not self.debug_mode:
             self._obs.start_stream()
+            otz_log(f"Applying buffer time of {self.buffer_time}s...")
             time.sleep(self.buffer_time)
+        self._start_time = time.time()
         
         otz_log("Starting event queue thread...")
         event_queue_thread = threading.Thread(
