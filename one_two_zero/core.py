@@ -18,7 +18,7 @@ class OneTwoZero:
         
         self.debug_mode = False
 
-    def check_event(self, event: OTZEvent, uptime: float):
+    def check_event(self, event: OTZEvent, uptime: float) -> None:
         if event.is_timer_event:
             event.update_timer()
             
@@ -32,7 +32,7 @@ class OneTwoZero:
             
             self._event_queue.put(lambda: event.on_condition_met(self._obs))
 
-    def check_events(self):
+    def check_events(self) -> None:
         uptime = self.get_uptime()
         
         for event in self.events:
@@ -44,7 +44,7 @@ class OneTwoZero:
         print(f"You are about to start streaming with a kill time of {self.kill_time} seconds ({self.kill_time / 3600:.2f}h).")
         return input("Are you sure? (Y/N) ").lower().strip().startswith('y')
 
-    def event_queue_loop(self):
+    def event_queue_loop(self) -> None:
         otz_log("Event queue thread running!")
         while self.get_uptime() < self.kill_time:
             if self._event_queue.empty(): continue
@@ -85,5 +85,5 @@ class OneTwoZero:
         
         event_queue_thread.join()
     
-    def subscribe_to_event(self, event: OTZEvent):
+    def subscribe_to_event(self, event: OTZEvent) -> None:
         self.events.append(event)
