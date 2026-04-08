@@ -2,10 +2,10 @@ from python_obs.clients import OBS
 from one_two_zero.core import OneTwoZero
 from one_two_zero.decorators import *
 
-KILL_TIME = 70
+KILL_TIME = 2 * 60 * 60
 otz = OneTwoZero(KILL_TIME)
-otz.buffer_time = 5
-otz.debug_mode = True
+otz.buffer_time = 0
+otz.debug_mode = False
 
 @otz_event_on_start(otz)
 def on_startup(obs: OBS):
@@ -13,7 +13,8 @@ def on_startup(obs: OBS):
 
 @otz_event_seconds(otz, lambda uptime: uptime >= 3 * 60)
 def and_we_are_live(obs: OBS):
-    obs.set_scene("120 Desktop")
+    pass
+    # obs.set_scene("Desktop")
 
 @otz_event_seconds(otz, lambda uptime: uptime >= KILL_TIME - 60)
 def one_minute_left(obs: OBS):
@@ -33,4 +34,5 @@ def thirty_minutes_left(obs: OBS):
 #     source.toggle_visiblity()
 
 if __name__ == "__main__":
-    otz.start_stream()
+    if otz.confirm_stream():
+        otz.start_stream()
