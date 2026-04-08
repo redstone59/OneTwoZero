@@ -37,7 +37,7 @@ class OneTwoZero:
             else:
                 event.has_run = True
             
-            self._event_queue.put(lambda: event.on_condition_met(self._obs))
+            self._event_queue.put(event)
 
     def check_events(self) -> None:
         uptime = self.get_uptime()
@@ -56,10 +56,10 @@ class OneTwoZero:
         while self.get_uptime() < self.kill_time:
             if self._event_queue.empty(): continue
 
-            event_to_run = self._event_queue.get()
-            otz_log(f"Running {"repeating" if event_to_run.is_timer_event else "one-time"} event '{event_to_run.on_condition_met.__name__}'...")
-            event_to_run()
-            otz_log(f"{"Repeating" if event_to_run.is_timer_event else "One-time"} event '{event_to_run.on_condition_met.__name__}' completed!")
+            event: OTZEvent = self._event_queue.get()
+            otz_log(f"Running event '{event.on_condition_met.__name__}'...")
+            event.on_condition_met(self._obs)
+            otz_log(f"Event '{event.on_condition_met.__name__}' completed!")
         otz_log("Event queue thread stopped.")
 
     def get_uptime(self) -> float:
